@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -119,36 +120,46 @@ public class ProductServiceImplementation implements ProductService{
     }
 
     // Important method
+    // chat gpt code
     @Override
     public Page<Product> getAllProduct(String category, List<String> colors, List<String> sizes, Integer minPrice, Integer maxPrice, Integer minDiscount, String sort, String stock, Integer pageNumber, Integer pageSize) {
+        // Validate pageNumber and pageSize
+        if (pageNumber == null || pageNumber < 0) pageNumber = 0;
+        if (pageSize == null || pageSize <= 0) pageSize = 10;  // Set a default page size
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         List<Product> products = productRepository.filterProducts(category, minPrice, maxPrice, minDiscount, sort);
 
-        // If the color of the product matches with the color of the product in the list that we passed. if yes then it will return true or false
-        if (!colors.isEmpty()){
+        // Apply color filtering
+        if (colors != null && !colors.isEmpty()) {
             products = products.stream().filter(p -> colors.stream().anyMatch(c -> c.equalsIgnoreCase(p.getColor()))).collect(Collectors.toList());
         }
 
-        if (stock != null){
-            if(stock.equals("in_stock")){
-                products = products.stream().filter(p -> p.getQuantity() > 0 ).collect(Collectors.toList());
-            }
-            else if(stock.equals("out_of_stock")){
-                products = products.stream().filter(p -> p.getQuantity() < 1 ).collect(Collectors.toList());
+        // Apply stock filtering
+        if (stock != null) {
+            if (stock.equals("in_stock")) {
+                products = products.stream().filter(p -> p.getQuantity() > 0).collect(Collectors.toList());
+            } else if (stock.equals("out_of_stock")) {
+                products = products.stream().filter(p -> p.getQuantity() < 1).collect(Collectors.toList());
             }
         }
 
         int startIndex = (int) pageable.getOffset();
         int endIndex = Math.min(startIndex + pageable.getPageSize(), products.size());
 
+        // Validate indices
+        if (startIndex >= products.size()) {
+            return new PageImpl<>(Collections.emptyList(), pageable, 0);
+        }
+
         List<Product> pageContent = products.subList(startIndex, endIndex);
         Page<Product> filteredProducts = new PageImpl<>(pageContent, pageable, products.size());
 
-
         return filteredProducts;
     }
+
+
 
     @Override
     public List<Product> findAllProduct() {
