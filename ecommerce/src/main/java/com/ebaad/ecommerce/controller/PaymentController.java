@@ -81,6 +81,7 @@ public class PaymentController {
     }
 
     // Now after successful payment we need to change the status of order from PENDING to PLACED and also update the payment details
+    @GetMapping("/payments")
     public ResponseEntity<ApiResponse> redirect(@RequestParam(name = "payment_id") String paymentId,
                                                 @RequestParam(name = "order_id") Long orderId) throws RazorpayException, OrderException {
         Order order=orderService.findOrderById(orderId);
