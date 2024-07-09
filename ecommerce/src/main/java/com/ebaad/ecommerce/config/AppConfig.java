@@ -44,7 +44,8 @@
 //                        // setAllowedOrigins allows what websites we want to run on our backend. So here we have to give the apis on which we will run our frontend
 //                        cfg.setAllowedOrigins(Arrays.asList(
 //                                "http://localhost:3000",  //react website
-//                                "http://localhost:4200" // angular website
+//                                "http://localhost:4200", // angular website
+                                  "https://ea-official-e-commerce-store.vercel.app"
 //                        ));
 //                        // Now we define which methods you want to allow to be accessed by your program like post, get, update etc. So here we are allowing all the methods by providing '*' and all methods of frontend as well
 //                        cfg.setAllowedMethods(Collections.singletonList("*"));
@@ -121,7 +122,8 @@ public class AppConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",  // React
-                "http://localhost:4200"  // Angular
+                "http://localhost:4200",  // Angular
+                "https://ea-official-e-commerce-store.vercel.app"
         ));
         configuration.setAllowedMethods(Collections.singletonList("*"));
         configuration.setAllowCredentials(true);
